@@ -42,10 +42,11 @@ void loop()
 void speed_up()
 {
   int j;
-   for(j=0;j<=5000;j++){
+   for(j=0;j<=10000;j++){
     digitalWrite(M1steppin,LOW);
     digitalWrite(M2steppin,LOW);
-    delayMicroseconds(2);
+    //delayMicroseconds(2);
+    delay(500);
     digitalWrite(M1steppin,HIGH);
     digitalWrite(M2steppin,HIGH);
     delay(1);
