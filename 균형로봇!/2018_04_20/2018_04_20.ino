@@ -35,40 +35,15 @@ void setup() {
 void loop() {
   get_s(); // 센서 값 읽어옴 
   Serial.println(AcY);
-  /*
-  if(!(AcY < 2000 && AcY > -2700)){ //비균형 상태
-    if(6000 < AcY ){ //뒤로 기울엇을 경우
-      forward();
-      speed_up(15000-AcY);
-    }
-    else if (-6000 > AcY ){ //앞로 기울었을 경우
-      back();
-      speed_up(15000+AcY);
-    }
-    else{
-      if(0 > AcY){ 
-        back();//음수
-        speed_up((6000+AcY));
-      }
-       else{
-        forward();//양수
-        speed_up((6000-AcY));
-       }
-    }
-  }
-  else{
-    stop_moter();
-    delay(50);
-  }
-  */
-  if (AcY > 500)
+  
+  if (AcY > 1200)
   {
     forward();
-    speed_up((16000 - AcY),9);
+    speed_up((17500 - AcY/100 *AcY/100),8);
   }
-  else if(AcY < -500){
+  else if(AcY < -700){
     back();
-    speed_up((16000 + AcY), 9);
+    speed_up((17500 - (AcY/100 *AcY/100)), 9);
   }
 }
 
@@ -96,7 +71,8 @@ void get_s(){
 
 void speed_up(int a, int sec) //모터를 1번 스탭을 주는 함수 즉 1.8도를 회전 시킴
 {
-    if( sec < 7) sec = 7;
+  if (a <= 2) a = 2;
+  //  if( sec < 7) sec = 7;
   for(int i=0;i<sec;i++){
     digitalWrite(M1steppin,LOW);
     digitalWrite(M2steppin,LOW);
