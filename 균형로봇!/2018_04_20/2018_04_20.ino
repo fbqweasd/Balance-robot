@@ -1,6 +1,6 @@
 #include<Wire.h>  //자이로센서 사용 라이브러리
-#define N  7900 //안정 상태일때 회전 속도
-#define H  2000// 심각하게 기울어졌을 떄 속도
+#define N  79 //안정 상태일때 회전 속도
+#define H  20// 심각하게 기울어졌을 떄 속도
 
 const int MPU=0x68;//MPU6050 I2C주소
 int AcX,AcZ,Tmp,GyX,GyY,GyZ;
@@ -39,11 +39,11 @@ void loop() {
   if (AcY > 1200)
   {
     forward();
-    speed_up((17500 - AcY/100 *AcY/100),8);
+    speed_up(H, AcY / 300);
   }
   else if(AcY < -700){
     back();
-    speed_up((17500 - (AcY/100 *AcY/100)), 9);
+    speed_up(H, (-AcY) / 300);
   }
 }
 
@@ -64,15 +64,14 @@ void get_s(){
   AcY = 0;
   for(int i = 0;i<10;i++){
     get6050();
-    delay(4);
+    delay(5);
   }
   
 }
 
 void speed_up(int a, int sec) //모터를 1번 스탭을 주는 함수 즉 1.8도를 회전 시킴
 {
-  if (a <= 2) a = 2;
-  //  if( sec < 7) sec = 7;
+  if( sec < 7) sec = 7;
   for(int i=0;i<sec;i++){
     digitalWrite(M1steppin,LOW);
     digitalWrite(M2steppin,LOW);
