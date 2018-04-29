@@ -1,14 +1,20 @@
 #include<Wire.h>  //자이로센서 사용 라이브러리
-#define N  15 //안정 상태일때 회전 속도
-#define H  4// 심각하게 기울어졌을 떄 속도
+#include <PID_v1.h>
+
+#define H 2
+
+float Kp = 1, Ki = 0.5, Kd = 1;
+double Setpoint= 0 , Output;
+double AcY;
+
+PID pid(&AcY, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);  
 
 const int MPU=0x68;//MPU6050 I2C주소
 int AcX,AcZ,Tmp,GyX,GyY,GyZ;
-volatile int AcY;
+
 void get6050();
 //여기 까지는 자이로센서 세팅
-/*
-*/
+
 int M1dirpin = 4;
 int M1steppin = 5;
 int M2dirpin = 7;
@@ -30,20 +36,27 @@ void setup() {
   pinMode(M1steppin,OUTPUT);
   pinMode(M2dirpin,OUTPUT);
   pinMode(M2steppin,OUTPUT);
+
+  /*이 친구들은 pid기본 설정을 해여*/
+
+  pid.SetMode(AUTOMATIC);      //PID모드를 AUTOMATIC으로 설정
+  pid.SetOutputLimits(5,50); //pid의 output 최소 최댓값 설정
 }
 
 void loop() {
   get_s(); // 센서 값 읽어옴 
   Serial.println(AcY);
+
+  pid.Compute();
   
-  if (AcY > 1400)
+  if (AcY > 500)
   {
     forward();
-    speed_up(H, AcY / 300);
+    speed_up(H, Output);
   }
   else if(AcY < -500){
     back();
-    speed_up(H, (-AcY) / 300);
+    speed_up(H, Output);
   }
 }
 
@@ -62,9 +75,9 @@ void get6050(){  //엄청 중요한 함수! 자이로 센서의 값을 읽어와
 }
 void get_s(){
   AcY = 0;
-  for(int i = 0;i<10;i++){
+  for(int i = 0;i<5;i++){
     get6050();
-    delay(3);
+    delay(5);
   }
   
 }
