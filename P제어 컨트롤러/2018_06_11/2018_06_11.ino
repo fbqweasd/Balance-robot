@@ -54,25 +54,8 @@ void setup() {
 /* ----------------------------------------------------------------- */
 
 void loop() {
-    // P();
-  back(50);
-  Serial.println("back");
-  delay(2000);
-  
-  forward(50);
-  Serial.println("forward");
-  delay(2000);
-  
-  left(50);
-  Serial.println("left");
-  delay(2000);
-  
-  right(50);
-  Serial.println("right");
-  delay(2000);
-    
+    P();
 }
-
 /* ----------------------------------------------------------------- */
 
 void get6050(){
@@ -93,18 +76,21 @@ void get6050(){
 
 int P(){
   get6050; // 안정범위는 1000 ~ -1000으로 임의로 설정을 하였습니다.
+  Serial.println(AcX);
   if( AcX < -1000 || AcX > 1000){ // 안정범위 밖일 경우
-    //int bup = AcX / 500; 
+    Serial.println("기울어짐");
     if(AcX > 0){
-      back(50);
+      back(300);
      }
     else if(AcX < 0){
-      forward(50);
+      forward(300);
     } 
   }
   else{ // 안정범위 안에 있을 경우
+    Serial.println("안정범위");
     stop_moter();
   }
+  Serial.println();
 }
 
 /* -------------------모터 제어 함수--------------------------- */
